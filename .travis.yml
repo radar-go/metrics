@@ -15,7 +15,6 @@ before_install:
 
 install:
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-  - sudo start-docker-daemon
 
 script:
   - make update-vendors
