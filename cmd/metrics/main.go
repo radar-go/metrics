@@ -20,56 +20,19 @@ package main
 */
 
 import (
-	"flag"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/golang/glog"
 
 	"github.com/radar-go/metrics/pkg/api"
 )
 
-var exit = make(chan os.Signal, 1)
-var reload = make(chan os.Signal, 1)
-
 func main() {
-	/* Parse the arguments. */
-	flag.Parse()
-
-	cfgDir := os.Getenv("CONF_DIR")
-	if cfgDir == "" {
-		cfgDir = "./conf"
-	}
-
-	signal.Notify(exit, syscall.SIGINT, syscall.SIGTERM)
-	signal.Notify(reload, syscall.SIGUSR1)
-
-	a := api.New(cfgDir)
-
+	a := api.New()
 	err := a.Start()
 	if err != nil {
 		glog.Exitf("Error starting the server: %s", err)
 	}
 
 	for {
-		select {
-		case <-exit:
-			glog.Info("Stoping server...")
-			err := a.Stop()
-			if err != nil {
-				glog.Exitf("Error stoping the server: %s", err)
-			}
-
-			os.Exit(0)
-		case <-reload:
-			glog.Info("Reloading server...")
-			err := a.Reload()
-			if err != nil {
-				glog.Exitf("Error reloading the server: %s", err)
-			}
-
-			glog.Info("Server reloaded")
-		}
+		a.SignalListen()
 	}
 }

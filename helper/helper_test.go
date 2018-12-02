@@ -1,4 +1,4 @@
-package api
+package helper
 
 /* Copyright (C) 2018 Radar team (see AUTHORS)
 
@@ -19,42 +19,20 @@ package api
 */
 
 import (
-	"os"
-	"syscall"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-const unexpectedError = "Unexpected error"
+func TestHelperFunctions(t *testing.T) {
+	enabled := true
+	update = &enabled
+	SaveGoldenData(t, "test", []byte("Testing golden data"))
+	data := GetGoldenData(t, "test")
+	assert.Equal(t, []byte("Testing golden data"), data,
+		"Unexpected error getting the golden data")
 
-func TestAPI(t *testing.T) {
-	os.Setenv("CONF_DIR", "./testdata")
-	a := New()
-	assert.NotNil(t, a, "Error creating the new api object")
+	data = GetJSONFile(t, "json_file")
+	assert.Equal(t, []byte{}, data, "Expected empty data")
 
-	err := a.Start()
-	assert.NoError(t, err, unexpectedError)
-
-	err = a.Reload()
-	assert.NoError(t, err, unexpectedError)
-
-	err = a.Stop()
-	assert.NoError(t, err, unexpectedError)
-
-	err = a.Reload()
-	assert.NoError(t, err, unexpectedError)
-
-	err = a.Start()
-	assert.EqualError(t, err, "Listener already started", unexpectedError)
-
-	err = a.Stop()
-	assert.NoError(t, err, unexpectedError)
-
-	a.reload <- syscall.SIGUSR1
-	a.SignalListen()
-
-	a.exitfn = func(code int) {}
-	a.exit <- syscall.SIGTERM
-	a.SignalListen()
 }

@@ -21,8 +21,12 @@ package api
 */
 
 import (
+	"flag"
 	"fmt"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/golang/glog"
@@ -32,14 +36,26 @@ import (
 	"github.com/radar-go/metrics/pkg/config"
 )
 
+type exiter func(code int)
+
 // API type set up the api server to response to the petitions.
 type API struct {
 	cfg      *config.Config
 	listener net.Listener
+	exit     chan os.Signal
+	reload   chan os.Signal
+	exitfn   exiter
 }
 
 // New returns a new API object.
-func New(cfgDir string) *API {
+func New() *API {
+	flag.Parse()
+
+	cfgDir := os.Getenv("CONF_DIR")
+	if cfgDir == "" {
+		cfgDir = "./conf"
+	}
+
 	glog.Infof("Reading the configurations from %s", cfgDir)
 	cfg, err := config.New(cfgDir)
 	if err != nil {
@@ -47,9 +63,17 @@ func New(cfgDir string) *API {
 			cfgDir)
 	}
 
-	return &API{
-		cfg: cfg,
+	a := &API{
+		cfg:    cfg,
+		exit:   make(chan os.Signal, 1),
+		reload: make(chan os.Signal, 1),
+		exitfn: func(code int) { os.Exit(code) },
 	}
+
+	signal.Notify(a.exit, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(a.reload, syscall.SIGUSR1)
+
+	return a
 }
 
 // Start the API server.
@@ -121,4 +145,25 @@ func (a *API) Reload() error {
 	}
 
 	return err
+}
+
+func (a *API) SignalListen() {
+	select {
+	case <-a.exit:
+		glog.Info("Stoping server...")
+		err := a.Stop()
+		if err != nil {
+			glog.Exitf("Error stoping the server: %s", err)
+		}
+
+		a.exitfn(0)
+	case <-a.reload:
+		glog.Info("Reloading server...")
+		err := a.Reload()
+		if err != nil {
+			glog.Exitf("Error reloading the server: %s", err)
+		}
+
+		glog.Info("Server reloaded")
+	}
 }
