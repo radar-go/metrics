@@ -28,6 +28,11 @@ import (
 	"github.com/radar-go/metrics/pkg/config"
 )
 
+const (
+	unexpectedControllerResponse = "Unexpected controller response"
+	unexpectedStatusCode         = "Unexpected status code"
+)
+
 func TestController(t *testing.T) {
 	cfg, err := config.New("./testdata")
 	assert.NoError(t, err, "Unexpected error reading the configs.")
@@ -35,39 +40,39 @@ func TestController(t *testing.T) {
 
 	ctx, c := setup(t, cfg)
 	c.panic(ctx, "test")
-	assert.Equal(t, 500, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 500, ctx.Response.StatusCode(), unexpectedStatusCode)
 	assert.Equal(t, []byte(`{"error": "API fatal error calling /"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 
 	c.methodNotAllowed(ctx)
-	assert.Equal(t, 405, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 405, ctx.Response.StatusCode(), unexpectedStatusCode)
 	assert.Equal(t, []byte(`{"error": "Method not allowed calling /"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 
 	c.notFound(ctx)
-	assert.Equal(t, 404, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 404, ctx.Response.StatusCode(), unexpectedStatusCode)
 	assert.Equal(t, []byte(`{"error": "Path / not found"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 
 	c.internalServerError(ctx, "Internal server error")
-	assert.Equal(t, 500, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 500, ctx.Response.StatusCode(), unexpectedStatusCode)
 	assert.Equal(t, []byte(`{"error":"Internal server error"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 
 	c.badRequest(ctx, "Bad request")
-	assert.Equal(t, 400, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 400, ctx.Response.StatusCode(), unexpectedStatusCode)
 	assert.Equal(t, []byte(`{"error":"Bad request"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 
 	c.unauthorized(ctx, "User not authorized to do this request")
-	assert.Equal(t, 403, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 403, ctx.Response.StatusCode(), unexpectedControllerResponse)
 	assert.Equal(t, []byte(`{"error":"User not authorized to do this request"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 
 	c.forbidden(ctx, "Request forbidden")
-	assert.Equal(t, 406, ctx.Response.StatusCode(), "Unexpected status code.")
+	assert.Equal(t, 406, ctx.Response.StatusCode(), unexpectedStatusCode)
 	assert.Equal(t, []byte(`{"error":"Request forbidden"}`),
-		ctx.Response.Body(), "Unexpected controller response")
+		ctx.Response.Body(), unexpectedControllerResponse)
 }
 
 func TestEndpoints(t *testing.T) {
