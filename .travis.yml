@@ -22,7 +22,7 @@ script:
   - GENERATE_REPORT=1 make tests
   - GENERATE_REPORT=1 make lint
   - GENERATE_REPORT=1 make coverage
-  - sonar-scanner -Dsonar.projectKey=radar-go_metrics -Dsonar.organization=radar-go -Dsonar.sources=.
+  - sonar-scanner -Dsonar.projectKey=radar-go_metrics -Dsonar.organization=radar-go -Dsonar.sources=. -Dsonar.golint.reportPath=reports/junit-report.xml -Dsonar.coverage.reportPath=reports/coverage.xml -Dsonar.test.reportPath=reports/junit-report.xml
 
 addons:
   sonarcloud:
