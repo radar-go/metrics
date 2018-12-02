@@ -16,6 +16,7 @@ install:
 - sudo start-docker-daemon
 
 script:
+  - make update-vendors
   - make
   - GENERATE_REPORT=1 make tests
   - GENERATE_REPORT=1 make lint
