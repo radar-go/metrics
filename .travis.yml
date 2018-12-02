@@ -1,4 +1,6 @@
 os: linux
+dist: trusty
+sudo: required
 language: go
 go:
 - "1.10.4"
@@ -13,11 +15,16 @@ before_install:
 
 install:
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-- sudo start-docker-daemon
+  - sudo start-docker-daemon
 
 script:
   - make update-vendors
-  - make
+  - make build
   - GENERATE_REPORT=1 make tests
   - GENERATE_REPORT=1 make lint
   - GENERATE_REPORT=1 make coverage
+  - sonar-scanner
+
+addons:
+  sonarcloud:
+    organization: "radar-go"
