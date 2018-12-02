@@ -22,7 +22,6 @@ script:
   - GENERATE_REPORT=1 make tests
   - GENERATE_REPORT=1 make lint
   - GENERATE_REPORT=1 make coverage
-  - cat reports/checkstyle-report.xml
   - sonar-scanner
 
 addons:

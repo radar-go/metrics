@@ -80,13 +80,13 @@ func New() *API {
 func (a *API) Start() error {
 	var err error
 
-	a.cfg.ReloadConfigs()
-	c := controller.New(a.cfg)
+	err = a.cfg.ReloadConfigs()
 	if err != nil {
-		glog.Errorf("Error creating the controller: %s", err)
+		glog.Errorf("Error reloading the configurations: %s", err)
 		return err
 	}
 
+	c := controller.New(a.cfg)
 	server := fasthttp.Server{
 		Handler:           fasthttp.CompressHandler(c.Router.Handler),
 		ReadBufferSize:    1024 * 64,
@@ -147,6 +147,7 @@ func (a *API) Reload() error {
 	return err
 }
 
+// SignalListen starts to listen to the signals to reload and exit the api service.
 func (a *API) SignalListen() {
 	select {
 	case <-a.exit:
