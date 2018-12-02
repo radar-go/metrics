@@ -19,6 +19,8 @@ package api
 */
 
 import (
+	"os"
+	"syscall"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,7 +29,8 @@ import (
 const unexpectedError = "Unexpected error"
 
 func TestAPI(t *testing.T) {
-	a := New("./testdata")
+	os.Setenv("CONF_DIR", "./testdata")
+	a := New()
 	assert.NotNil(t, a, "Error creating the new api object")
 
 	err := a.Start()
@@ -47,4 +50,11 @@ func TestAPI(t *testing.T) {
 
 	err = a.Stop()
 	assert.NoError(t, err, unexpectedError)
+
+	a.reload <- syscall.SIGUSR1
+	a.SignalListen()
+
+	a.exitfn = func(code int) {}
+	a.exit <- syscall.SIGTERM
+	a.SignalListen()
 }

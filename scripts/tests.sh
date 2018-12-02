@@ -29,8 +29,10 @@ done
 
 echo "Running unit tests."
 
+PACKAGES=$(go list ./...)
+
 # Generate tests report
-go test -v ./... -coverprofile ${COVER_FILE} | tee /dev/tty | go-junit-report > "${JUNIT_REPORT}"; test ${PIPESTATUS[0]} -eq 0 || status=${PIPESTATUS[0]}
+go test -v ${PACKAGES} -coverprofile ${COVER_FILE} | tee /dev/tty | go-junit-report > "${JUNIT_REPORT}"; test ${PIPESTATUS[0]} -eq 0 || status=${PIPESTATUS[0]}
 
 # Print code coverage details
 go tool cover -func "${COVER_FILE}"
@@ -46,9 +48,7 @@ fi
 echo "PASS"
 
 echo "Checking gofmt: "
-DIRS=$(go list -f '{{.Dir}}' ./...)
-
-ERRS=$(gofmt -l ${DIRS} || true)
+ERRS=$(go fmt ${PACKAGES} || true)
 if [ -n "${ERRS}" ]; then
     echo "FAIL - the following files need to be gofmt'ed:"
     for e in ${ERRS}; do
@@ -60,7 +60,6 @@ fi
 echo "PASS"
 
 echo "Checking go vet: "
-PACKAGES=$(go list ./...)
 ERRS=$(go vet ${PACKAGES} 2>&1 || true)
 if [ -n "${ERRS}" ]; then
     echo "FAIL"

@@ -41,13 +41,13 @@ func TestService(t *testing.T) {
 	bodyBytes := resp.Body()
 	assert.Equal(t, []byte(`{"status": "ok"}`), bodyBytes)
 
-	reload <- syscall.SIGUSR1
+	syscall.Kill(syscall.Getpid(), syscall.SIGUSR1)
 	time.Sleep(2 * time.Second)
 	client.Do(req, resp)
 	bodyBytes = resp.Body()
 	assert.Equal(t, []byte(`{"status": "ok"}`), bodyBytes)
 
-	exit <- syscall.SIGTERM
+	syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
 	time.Sleep(2 * time.Second)
 	client.Do(req, resp)
 	bodyBytes = resp.Body()

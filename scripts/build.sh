@@ -20,7 +20,7 @@ fi
 export CGO_ENABLED=0
 
 echo "Go installing app with PKG: ${PKG} VERSION: ${VERSION}"
-go build -v                                             \
+go build                                                \
     -installsuffix "static"                             \
     -ldflags "-X ${PKG}/pkg/version.VERSION=${VERSION}" \
 	-o bin/${BIN}                                       \
