@@ -30,6 +30,8 @@ import (
 	"github.com/radar-go/metrics/pkg/config"
 )
 
+const jsonContentType = "application/json; charset=utf-8"
+
 // Controller handles all the incoming requests to the API.
 type Controller struct {
 	Router *fasthttprouter.Router
@@ -66,7 +68,7 @@ func (c *Controller) register() {
 func (c *Controller) panic(ctx *fasthttp.RequestCtx, from interface{}) {
 	logPath(ctx.Path())
 	ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-	ctx.SetContentType("application/json; charset=utf-8")
+	ctx.SetContentType(jsonContentType)
 	ctx.SetBodyString(fmt.Sprintf(`{"error": "API fatal error calling %s"}`,
 		ctx.Path()))
 }
@@ -76,7 +78,7 @@ func (c *Controller) panic(ctx *fasthttp.RequestCtx, from interface{}) {
 func (c *Controller) methodNotAllowed(ctx *fasthttp.RequestCtx) {
 	logPath(ctx.Path())
 	ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
-	ctx.SetContentType("application/json; charset=utf-8")
+	ctx.SetContentType(jsonContentType)
 	ctx.SetBodyString(fmt.Sprintf(`{"error": "Method not allowed calling %s"}`,
 		ctx.Path()))
 }
@@ -85,7 +87,7 @@ func (c *Controller) methodNotAllowed(ctx *fasthttp.RequestCtx) {
 func (c *Controller) notFound(ctx *fasthttp.RequestCtx) {
 	logPath(ctx.Path())
 	ctx.SetStatusCode(fasthttp.StatusNotFound)
-	ctx.SetContentType("application/json; charset=utf-8")
+	ctx.SetContentType(jsonContentType)
 	ctx.SetBodyString(fmt.Sprintf(`{"error": "Path %s not found"}`,
 		ctx.Path()))
 }
@@ -94,7 +96,7 @@ func (c *Controller) notFound(ctx *fasthttp.RequestCtx) {
 func (c *Controller) healthcheck(ctx *fasthttp.RequestCtx) {
 	logPath(ctx.Path())
 	ctx.SetStatusCode(fasthttp.StatusOK)
-	ctx.SetContentType("application/json; charset=utf-8")
+	ctx.SetContentType(jsonContentType)
 	ctx.SetBodyString(`{"status": "ok"}`)
 }
 
@@ -124,6 +126,6 @@ func (c *Controller) forbidden(ctx *fasthttp.RequestCtx, msg string) {
 
 // setError sets the error response.
 func (c *Controller) setError(ctx *fasthttp.RequestCtx, msg string) {
-	ctx.SetContentType("application/json; charset=utf-8")
+	ctx.SetContentType(jsonContentType)
 	ctx.SetBodyString(fmt.Sprintf(`{"error":"%s"}`, msg))
 }

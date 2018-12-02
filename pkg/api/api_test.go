@@ -24,25 +24,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const unexpectedError = "Unexpected error"
+
 func TestAPI(t *testing.T) {
 	a := New("./testdata")
 	assert.NotNil(t, a, "Error creating the new api object")
 
 	err := a.Start()
-	assert.NoError(t, err, "Unexpected error")
+	assert.NoError(t, err, unexpectedError)
 
 	err = a.Reload()
-	assert.NoError(t, err, "Unexpected error")
+	assert.NoError(t, err, unexpectedError)
 
 	err = a.Stop()
-	assert.NoError(t, err, "Unexpected error")
+	assert.NoError(t, err, unexpectedError)
 
 	err = a.Reload()
-	assert.NoError(t, err, "Unexpected error")
+	assert.NoError(t, err, unexpectedError)
 
 	err = a.Start()
-	assert.EqualError(t, err, "Listener already started", "Unexpected error")
+	assert.EqualError(t, err, "Listener already started", unexpectedError)
 
 	err = a.Stop()
-	assert.NoError(t, err, "Unexpected error")
+	assert.NoError(t, err, unexpectedError)
 }

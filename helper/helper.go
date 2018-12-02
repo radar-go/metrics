@@ -28,10 +28,12 @@ import (
 
 var update = flag.Bool("update", false, "update .golden files")
 
+const testDir = "testdata"
+
 // SaveGoldenData saves test data in a golden file.
 func SaveGoldenData(t *testing.T, name string, data []byte) {
 	t.Helper()
-	golden := filepath.Join("testdata", name+".golden")
+	golden := filepath.Join(testDir, name+".golden")
 	if *update {
 		err := ioutil.WriteFile(golden, data, 0644)
 		if err != nil {
@@ -43,7 +45,7 @@ func SaveGoldenData(t *testing.T, name string, data []byte) {
 // GetGoldenData gets data from a golden file.
 func GetGoldenData(t *testing.T, name string) []byte {
 	t.Helper()
-	golden := filepath.Join("testdata", name+".golden")
+	golden := filepath.Join(testDir, name+".golden")
 	expected, err := ioutil.ReadFile(golden)
 	if err != nil {
 		t.Errorf("Unexpected error: %s", err)
@@ -55,7 +57,7 @@ func GetGoldenData(t *testing.T, name string) []byte {
 // GetJSONFile obtain the content of a json file from the testdata directory.
 func GetJSONFile(t *testing.T, name string) []byte {
 	t.Helper()
-	filename := filepath.Join("testdata", name+".json")
+	filename := filepath.Join(testDir, name+".json")
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Errorf("Unexpected error reading the json file: %s", err)
