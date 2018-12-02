@@ -1,0 +1,13 @@
+{
+    "Enable": [
+        "gofmt",
+        "errcheck",
+        "vet",
+        "golint",
+		"deadcode",
+		"goimports",
+		"unused"
+    ],
+    "Vendor": true,
+    "Deadline": "60s"
+}

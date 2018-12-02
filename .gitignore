@@ -1,0 +1,5 @@
+/vendor/
+/Gopkg.lock
+/bin/
+/reports
+/profile.cov
