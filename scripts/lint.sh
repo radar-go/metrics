@@ -22,7 +22,7 @@ if [ ${GENERATE_REPORT} -eq 0 ]; then
 	ISSUES=$(wc -l < ${REPORT})
 	echo "gometalinter found ${ISSUES} issues."
 else
-	# generate XML report
+	# generate report
 	gometalinter --config ${GOMETALINTER_CONFIG} --sort=path --checkstyle ./... > ${REPORT}
 fi
 status=$?
