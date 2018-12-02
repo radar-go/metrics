@@ -76,6 +76,7 @@ func New() *API {
 	return a
 }
 
+// Start the API server.
 func (a *API) Start() error {
 	var err error
 

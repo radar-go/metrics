@@ -24,6 +24,7 @@ if [ ${GENERATE_REPORT} -eq 0 ]; then
 else
 	# generate report
 	gometalinter --config ${GOMETALINTER_CONFIG} --sort=path --checkstyle ./... > ${REPORT}
+	golint ./... | grep -v vendor > ${REPORTS_DIR}/linter.out
 fi
 status=$?
 set -e

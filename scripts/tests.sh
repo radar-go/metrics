@@ -69,7 +69,7 @@ if [ -n "${ERRS}" ]; then
 fi
 echo "PASS"
 
-if [ ${GENERATE_REPORT} -eq 0 ]; then
+if [ ${GENERATE_REPORT} -eq 1 ]; then
 	go test -json -v ${PACKAGES} > ${REPORTS_DIR}/test-report.json
 fi
 
