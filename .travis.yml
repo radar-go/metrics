@@ -1,0 +1,20 @@
+os: linux
+language: go
+go:
+- 1.10
+
+services:
+  - docker
+
+before_install:
+  - export GOROOT=$(go env GOROOT)
+
+install:
+  - go get github.com/golang/dep/cmd/dep
+  - go get -u github.com/jstemmer/go-junit-report
+
+script:
+  - make
+  - GENERATE_REPORT=1 make tests
+  - GENERATE_REPORT=1 make lint
+  - GENERATE_REPORT=1 make coverage
