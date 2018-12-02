@@ -1,0 +1,29 @@
+os: linux
+dist: trusty
+sudo: required
+language: go
+go:
+- "1.10.4"
+
+branches:
+  only:
+  - master
+
+before_install:
+- export GOROOT=$(go env GOROOT)
+- export GOBIN=$(go env GOBIN)
+
+install:
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+
+script:
+  - make update-vendors
+  - make build
+  - GENERATE_REPORT=1 make tests
+  - GENERATE_REPORT=1 make lint
+  - GENERATE_REPORT=1 make coverage
+  - sonar-scanner -Dsonar.projectKey=radar-go_metrics -Dsonar.organization=radar-go -Dsonar.sources=.
+
+addons:
+  sonarcloud:
+    organization: "radar-go"
