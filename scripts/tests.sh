@@ -68,3 +68,20 @@ if [ -n "${ERRS}" ]; then
     exit 1
 fi
 echo "PASS"
+
+if [ ${GENERATE_REPORT} -eq 0 ]; then
+	go test -json -v ${PACKAGES} > ${REPORTS_DIR}/test-report.json
+fi
+
+if [ ${GENERATE_REPORT} -eq 0 ]; then
+	ERRS=$(go vet ${PACKAGES} 2>&1 || true)
+else
+	ERRS=$(go vet ${PACKAGES} 2> ${REPORTS_DIR}/govet-report.out || true)
+fi
+if [ -n "${ERRS}" ]; then
+	echo "FAIL"
+	echo "${ERRS}"
+	echo
+	exit 1
+fi
+echo "PASS"
